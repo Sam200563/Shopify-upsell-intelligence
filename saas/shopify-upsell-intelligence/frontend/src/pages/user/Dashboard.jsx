@@ -10,7 +10,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchInsights = async () => {
             try {
-                const { data } = await axios.get('/api/insights/history');
+                const { data } = await axios.get('/insights/history');
                 setRecentInsights(data.slice(0, 3)); // Show top 3
             } catch (error) {
                 console.error(error);
