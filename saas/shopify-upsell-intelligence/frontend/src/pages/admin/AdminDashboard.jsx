@@ -8,7 +8,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const { data } = await axios.get('/api/admin/stats');
+                const { data } = await axios.get('/admin/stats');
                 setStats(data);
             } catch (error) {
                 console.error(error);

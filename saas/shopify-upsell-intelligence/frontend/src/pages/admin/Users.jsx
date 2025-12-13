@@ -12,7 +12,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
         try {
-            const { data } = await axios.get('/api/admin/users');
+            const { data } = await axios.get('/admin/users');
             setUsers(data);
         } catch (error) {
             console.error(error);
@@ -24,7 +24,7 @@ const Users = () => {
     const handleBlock = async (id) => {
         if (!window.confirm('Are you sure you want to change block status?')) return;
         try {
-            await axios.put(`/api/admin/block/${id}`);
+            await axios.put(`/admin/block/${id}`);
             fetchUsers();
         } catch (error) {
             console.error(error);
@@ -85,8 +85,8 @@ const Users = () => {
                                         <button
                                             onClick={() => handleBlock(user._id)}
                                             className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-colors ${user.isBlocked
-                                                    ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                ? 'bg-green-50 text-green-600 hover:bg-green-100'
+                                                : 'bg-red-50 text-red-600 hover:bg-red-100'
                                                 }`}
                                         >
                                             {user.isBlocked ? <span className="flex items-center gap-1"><CheckCircle size={14} /> Unblock</span> : <span className="flex items-center gap-1"><Ban size={14} /> Block</span>}

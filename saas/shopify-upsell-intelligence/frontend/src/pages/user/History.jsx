@@ -9,7 +9,7 @@ const History = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const { data } = await axios.get('/api/insights/history');
+                const { data } = await axios.get('/insights/history');
                 setInsights(data);
             } catch (error) {
                 console.error(error);

@@ -15,7 +15,7 @@ const GenerateInsight = () => {
         try {
             // Small delay to simulate AI thinking
             await new Promise(r => setTimeout(r, 1500));
-            const { data } = await axios.post('/api/insights/generate', formData);
+            const { data } = await axios.post('/insights/generate', formData);
             setResult(data);
         } catch (error) {
             console.error(error);
