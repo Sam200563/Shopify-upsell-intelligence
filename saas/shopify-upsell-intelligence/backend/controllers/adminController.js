@@ -46,8 +46,37 @@ const getStats = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Seed database with initial data
+// @route   POST /api/admin/seed
+// @access  Public (Temporary)
+const seedDatabase = asyncHandler(async (req, res) => {
+    const User = require('../models/User');
+    const UpsellInsight = require('../models/UpsellInsight');
+
+    await User.deleteMany();
+    await UpsellInsight.deleteMany();
+
+    const createdUsers = await User.insertMany([
+        {
+            name: 'Admin User',
+            email: 'admin@example.com',
+            password: 'password123',
+            role: 'admin',
+        },
+        {
+            name: 'John Doe',
+            email: 'user@example.com',
+            password: 'password123',
+            role: 'user',
+        },
+    ]);
+
+    res.json({ message: 'Database seeded successfully', users: createdUsers });
+});
+
 module.exports = {
     getUsers,
     blockUser,
     getStats,
+    seedDatabase
 };
