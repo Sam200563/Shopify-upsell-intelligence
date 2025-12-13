@@ -56,7 +56,7 @@ const seedDatabase = asyncHandler(async (req, res) => {
     await User.deleteMany();
     await UpsellInsight.deleteMany();
 
-    const createdUsers = await User.insertMany([
+    const users = [
         {
             name: 'Admin User',
             email: 'admin@example.com',
@@ -69,9 +69,13 @@ const seedDatabase = asyncHandler(async (req, res) => {
             password: 'password123',
             role: 'user',
         },
-    ]);
+    ];
 
-    res.json({ message: 'Database seeded successfully', users: createdUsers });
+    for (const user of users) {
+        await User.create(user);
+    }
+
+    res.json({ message: 'Database seeded successfully' });
 });
 
 module.exports = {
