@@ -29,6 +29,16 @@ const userSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        usage: {
+            date: {
+                type: String, // Format: YYYY-MM-DD
+                default: new Date().toISOString().split('T')[0],
+            },
+            count: {
+                type: Number,
+                default: 0,
+            },
+        },
     },
     {
         timestamps: true,

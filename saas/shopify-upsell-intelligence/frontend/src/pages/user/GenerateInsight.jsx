@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Sparkles, Loader2, Copy, Check } from 'lucide-react';
+import { Sparkles, Loader2, Copy, Check, Lock } from 'lucide-react';
 
 const GenerateInsight = () => {
     const [formData, setFormData] = useState({ productName: '', category: '', price: '' });
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(null);
+    const [showLimitModal, setShowLimitModal] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,6 +22,9 @@ const GenerateInsight = () => {
             setResult(data);
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.status === 403) {
+                setShowLimitModal(true);
+            }
         } finally {
             setLoading(false);
         }
@@ -162,6 +168,36 @@ const GenerateInsight = () => {
                     )}
                 </div>
             </div>
+
+            {/* Limit Reached Modal */}
+            {showLimitModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl relative">
+                        <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Lock className="w-8 h-8 text-purple-500" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Daily Limit Reached</h2>
+                        <p className="text-slate-400 mb-8">
+                            You've hit your 5/day free limit. Wait 24 hours to reset or upgrade for unlimited access.
+                        </p>
+
+                        <div className="space-y-3">
+                            <button
+                                onClick={() => navigate('/plans')}
+                                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-bold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+                            >
+                                Upgrade Now
+                            </button>
+                            <button
+                                onClick={() => setShowLimitModal(false)}
+                                className="w-full py-3 bg-slate-700 rounded-xl font-bold hover:bg-slate-600 transition-all text-slate-300"
+                            >
+                                Not Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

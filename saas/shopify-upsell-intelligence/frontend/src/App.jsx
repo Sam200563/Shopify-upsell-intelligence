@@ -14,6 +14,7 @@ import GenerateInsight from './pages/user/GenerateInsight';
 import History from './pages/user/History';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Users from './pages/admin/Users';
+import Plans from './pages/Plans';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -39,6 +40,7 @@ function App() {
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="generate" element={<GenerateInsight />} />
                     <Route path="history" element={<History />} />
+                    <Route path="plans" element={<Plans />} />
                 </Route>
 
                 {/* Admin Routes */}

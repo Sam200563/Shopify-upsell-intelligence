@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const UpsellInsight = require('../models/UpsellInsight');
+const User = require('../models/User');
 
 // Helper for Mock Logic
 const generateMockIdeas = (category, productPrice) => {
@@ -46,7 +47,28 @@ const generateInsight = asyncHandler(async (req, res) => {
         throw new Error('Please provide product details');
     }
 
+    const user = await User.findById(req.user.id);
+    const today = new Date().toISOString().split('T')[0];
+
+    // Reset count if new day
+    if (user.usage.date !== today) {
+        user.usage.date = today;
+        user.usage.count = 0;
+    }
+
+    // Check limit for free plan
+    if (user.plan === 'free' && user.usage.count >= 5) {
+        // Save date reset even if blocked
+        await user.save();
+        res.status(403);
+        throw new Error('Daily limit reached. Upgrade to continue.');
+    }
+
     const { upsells, crossSells, copies, aovIncrease } = generateMockIdeas(category, price);
+
+    // Increment usage
+    user.usage.count += 1;
+    await user.save();
 
     const insight = await UpsellInsight.create({
         userId: req.user.id,
