@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Sparkles, TrendingUp, ArrowRight, Loader2 } from 'lucide-react';
+import { Sparkles, TrendingUp, ArrowRight, Loader2, X, Copy, Check } from 'lucide-react';
 
 const Dashboard = () => {
     const [recentInsights, setRecentInsights] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedInsight, setSelectedInsight] = useState(null);
+    const [copied, setCopied] = useState(null);
+
+    const copyToClipboard = (text, idx) => {
+        navigator.clipboard.writeText(text);
+        setCopied(idx);
+        setTimeout(() => setCopied(null), 2000);
+    };
 
     useEffect(() => {
         const fetchInsights = async () => {
@@ -80,7 +88,10 @@ const Dashboard = () => {
                                     ))}
                                 </div>
 
-                                <button className="w-full py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium transition-colors">
+                                <button
+                                    onClick={() => setSelectedInsight(insight)}
+                                    className="w-full py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium transition-colors"
+                                >
                                     View Details
                                 </button>
                             </div>
@@ -88,6 +99,93 @@ const Dashboard = () => {
                     </div>
                 )}
             </div>
+            {/* Insight Details Modal */}
+            {selectedInsight && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col">
+
+                        {/* Header */}
+                        <div className="p-6 border-b border-slate-700 flex justify-between items-start sticky top-0 bg-slate-800 z-10">
+                            <div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <span className="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 border border-slate-600">
+                                        {selectedInsight.category}
+                                    </span>
+                                    <span className="text-green-400 text-sm font-bold bg-green-900/20 px-2 py-1 rounded border border-green-500/20">
+                                        +{selectedInsight.estimatedAOVIncrease} AOV
+                                    </span>
+                                </div>
+                                <h2 className="text-2xl font-bold text-white pr-8">{selectedInsight.productName}</h2>
+                                <p className="text-slate-400">${selectedInsight.price}</p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedInsight(null)}
+                                className="p-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 space-y-6">
+                            {/* Upsells */}
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Upsell Recommendations</h3>
+                                <div className="grid gap-3">
+                                    {selectedInsight.upsellIdeas.map((idea, i) => (
+                                        <div key={i} className="flex items-start gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-700/50">
+                                            <div className="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</div>
+                                            <p className="text-slate-300">{idea}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Cross-sells */}
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Cross-Sell Ideas</h3>
+                                <div className="grid gap-3">
+                                    {selectedInsight.crossSellIdeas.map((idea, i) => (
+                                        <div key={i} className="flex items-start gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-700/50">
+                                            <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</div>
+                                            <p className="text-slate-300">{idea}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Offer Copy */}
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">High-Converting Copy</h3>
+                                <div className="space-y-3">
+                                    {selectedInsight.offerCopies.map((copyText, i) => (
+                                        <div key={i} className="group relative p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
+                                            <p className="text-slate-300 pr-8">"{copyText}"</p>
+                                            <button
+                                                onClick={() => copyToClipboard(copyText, i)}
+                                                className="absolute top-3 right-3 p-1.5 text-slate-500 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                                            >
+                                                {copied === i ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-6 border-t border-slate-700 bg-slate-800 sticky bottom-0 z-10">
+                            <button
+                                onClick={() => setSelectedInsight(null)}
+                                className="w-full py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-white transition-colors"
+                            >
+                                Close Details
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
